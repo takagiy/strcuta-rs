@@ -1,4 +1,4 @@
 fn main() {
-    strcuta::OtoIni::load("oto.ini");
+    strcuta::OtoIni::explore(".");
     println!("Hello, world!");
 }

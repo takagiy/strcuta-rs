@@ -1,5 +1,7 @@
 use std::{
-    collections::HashMap,
+    collections::{
+      HashMap,
+    },
     io::{
       BufReader,
       BufRead,
@@ -11,6 +13,11 @@ use std::{
       Path,
       PathBuf,
     },
+};
+
+use walkdir::{
+  WalkDir,
+  DirEntry,
 };
 
 pub struct OtoIni {
@@ -36,6 +43,12 @@ pub enum OtoDuration {
 }
 
 impl OtoIni {
+  pub fn new() -> OtoIni {
+    OtoIni {
+      entries: HashMap::new()
+    }
+  }
+
   pub fn load(path: impl AsRef<Path>) -> OtoIni {
     let oto_ini = File::open(path.as_ref()).unwrap();
     let ini_reader = BufReader::new(oto_ini);
@@ -48,6 +61,25 @@ impl OtoIni {
     OtoIni {
       entries: entries
     }
+  }
+
+  pub fn explore(path: impl AsRef<Path>) -> OtoIni {
+    let mut oto_ini = Self::new();
+    for dir_entry in WalkDir::new(path).max_depth(3) {
+      let dir_entry = dir_entry.unwrap();
+      if Self::is_oto_ini(&dir_entry) {
+        oto_ini.extend(Self::load(dir_entry.path()));
+      }
+    }
+    oto_ini
+  }
+
+  pub fn extend(&mut self, other: Self) {
+    self.entries.extend(other.entries);
+  }
+
+  fn is_oto_ini(dir_entry: &DirEntry) -> bool {
+    dir_entry.file_name() == "oto.ini" && dir_entry.file_type().is_file()
   }
 }
 
