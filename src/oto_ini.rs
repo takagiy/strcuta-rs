@@ -8,11 +8,7 @@ use std::{
       HashMap,
     },
     io::{
-      BufReader,
       BufRead,
-    },
-    fs:: {
-      File,
     },
     path::{
       Path,
@@ -54,9 +50,7 @@ impl OtoIni {
   }
 
   pub fn load(path: impl AsRef<Path>) -> OtoIni {
-    //let oto_ini = File::open(path.as_ref()).unwrap();
-    //let ini_reader = BufReader::new(oto_ini);
-    let ini_reader = IO::shift_jis_reader(path.as_ref());
+    let ini_reader = IO::shift_jis_reader(path);
 
     let mut entries = HashMap::new();
     for line in ini_reader.lines() {

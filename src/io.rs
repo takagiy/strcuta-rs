@@ -14,7 +14,6 @@ use encoding_rs::{
   SHIFT_JIS,
 };
 use encoding_rs_io::{
-  DecodeReaderBytes,
   DecodeReaderBytesBuilder,
 };
 
