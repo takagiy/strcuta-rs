@@ -49,7 +49,7 @@ impl OtoIni {
     }
   }
 
-  pub fn load(path: impl AsRef<Path>) -> OtoIni {
+  pub fn open(path: impl AsRef<Path>) -> OtoIni {
     let ini_reader = IO::shift_jis_reader(path);
 
     let mut entries = HashMap::new();
@@ -67,7 +67,7 @@ impl OtoIni {
     for dir_entry in WalkDir::new(path).max_depth(3) {
       let dir_entry = dir_entry.unwrap();
       if Self::is_oto_ini(&dir_entry) {
-        oto_ini.extend(Self::load(dir_entry.path()));
+        oto_ini.extend(Self::open(dir_entry.path()));
       }
     }
     oto_ini

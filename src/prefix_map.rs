@@ -26,7 +26,7 @@ impl PrefixMap {
     }
   }
 
-  pub fn load(path: impl AsRef<Path>) -> PrefixMap {
+  pub fn open(path: impl AsRef<Path>) -> PrefixMap {
     let map_reader = IO::shift_jis_reader(path);
 
     let mut entries = HashMap::new();
