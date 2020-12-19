@@ -2,6 +2,9 @@ use std::{
   slice::{
     Iter,
   },
+  ops::{
+    Deref,
+  }
 };
 
 pub struct Frq {
@@ -40,5 +43,21 @@ impl<'a> Iterator for FrqIter<'a> {
     self.samples.next().and_then(|frq| {
         self.amplitude_samples.next().map(|amp| (frq, amp))
     })
+  }
+}
+
+impl Deref for Frq {
+  type Target = [f64];
+
+  fn deref(&self) -> &Self::Target {
+    &self.samples
+  }
+}
+
+impl Deref for FrqIter<'_> {
+  type Target = [f64];
+
+  fn deref(&self) -> &Self::Target {
+    self.as_slice()
   }
 }

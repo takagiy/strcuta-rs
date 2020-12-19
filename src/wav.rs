@@ -5,6 +5,9 @@ use std::{
   path::{
     Path,
   },
+  ops::{
+    Deref,
+  }
 };
 use hound::{
   WavReader,
@@ -14,7 +17,9 @@ pub struct Wav {
   samples: Vec<i32>
 }
 
-pub type WavIter<'a> = Iter<'a, i32>;
+pub struct WavIter<'a> {
+  samples: Iter<'a, i32>
+}
 
 impl Wav {
   pub fn open(path: impl AsRef<Path>) -> Wav {
@@ -25,6 +30,38 @@ impl Wav {
   }
 
   pub fn iter(&self) -> WavIter<'_> {
-    self.samples.iter()
+    WavIter {
+      samples: self.samples.iter()
+    }
+  }
+}
+
+impl WavIter<'_> {
+  pub fn as_slice(&self) -> &[i32] {
+    self.samples.as_slice()
+  }
+}
+
+impl<'a> Iterator for WavIter<'a> {
+  type Item = &'a i32;
+
+  fn next(&mut self) -> Option<Self::Item> {
+    self.samples.next()
+  }
+}
+
+impl Deref for Wav {
+  type Target = [i32];
+
+  fn deref(&self) -> &Self::Target {
+    &self.samples
+  }
+}
+
+impl Deref for WavIter<'_> {
+  type Target = [i32];
+
+  fn deref(&self) -> &Self::Target {
+    self.as_slice()
   }
 }

@@ -19,12 +19,37 @@ pub struct VoiceIter<'a> {
   frq: FrqIter<'a>,
 }
 
-impl VoiceIter<'_> {
-  pub fn wav(&self) -> &[i32] {
+pub trait VoiceRef {
+  fn wav(&self) -> &[i32];
+
+  fn frq(&self) -> &[f64];
+}
+
+impl Voice {
+  pub fn iter(&self) -> VoiceIter<'_> {
+    VoiceIter {
+      wav: self.wav.iter(),
+      frq: self.frq.iter(),
+    }
+  }
+}
+
+impl VoiceRef for Voice {
+  fn wav(&self) -> &[i32] {
+    &self.wav
+  }
+
+  fn frq(&self) -> &[f64] {
+    &self.frq
+  }
+}
+
+impl VoiceRef for VoiceIter<'_> {
+  fn wav(&self) -> &[i32] {
     self.wav.as_slice()
   }
 
-  pub fn frq(&self) -> &[f64] {
+  fn frq(&self) -> &[f64] {
     self.frq.as_slice()
   }
 }
