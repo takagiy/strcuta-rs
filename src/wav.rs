@@ -29,9 +29,14 @@ pub struct Wav {
 pub type WavHeader = WavSpec;
 
 #[derive(Getters)]
-pub struct WavIter<'a> {
+pub struct WavPart<'a> {
   #[get = "pub"]
   header: &'a WavHeader,
+  samples: &'a [i32],
+}
+
+#[derive(Getters)]
+pub struct WavIter<'a> {
   samples: Iter<'a, i32>,
 }
 
@@ -44,22 +49,34 @@ impl Wav {
     }
   }
 
+  pub fn as_part(&self) -> WavPart<'_> {
+    WavPart {
+      header: &self.header,
+      samples: &self.samples,
+    }
+  }
+
   pub fn iter(&self) -> WavIter<'_> {
     WavIter {
-      header: &self.header,
-      samples: self.samples.iter(),
+      samples: self.samples.iter()
     }
   }
 }
 
-impl WavIter<'_> {
+impl WavPart<'_> {
   pub fn samples(&self) -> &[i32] {
-    self.samples.as_slice()
+    self.samples
+  }
+
+  pub fn iter(&self) -> WavIter<'_> {
+    WavIter {
+      samples: self.samples.iter()
+    }
   }
 
   pub fn save(&self, path: impl AsRef<Path>) {
     let mut writer = WavWriter::create(path, self.header.clone()).unwrap();
-    for &smp in self.samples.as_slice() {
+    for &smp in self.samples {
       writer.write_sample(smp).unwrap();
     }
     writer.finalize().unwrap();
@@ -88,10 +105,18 @@ impl Deref for Wav {
   }
 }
 
+impl Deref for WavPart<'_> {
+  type Target = [i32];
+
+  fn deref(&self) -> &Self::Target {
+    self.samples
+  }
+}
+
 impl Deref for WavIter<'_> {
   type Target = [i32];
 
   fn deref(&self) -> &Self::Target {
-    self.samples()
+    self.samples.as_slice()
   }
 }

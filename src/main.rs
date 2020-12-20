@@ -3,7 +3,7 @@ fn main() {
     for amp in wav.iter() {
       print!("{};", amp);
     }
-    let wav = wav.iter();
+    let wav = wav.as_part();
     wav.save("resources/test.wav");
     wav.save("resources/test2.wav");
     println!();

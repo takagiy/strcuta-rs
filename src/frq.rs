@@ -47,9 +47,14 @@ pub struct FrqHeader {
 }
 
 #[derive(Getters)]
-pub struct FrqIter<'a> {
+pub struct FrqPart<'a> {
   #[get = "pub"]
   header: &'a FrqHeader,
+  samples: &'a [f64],
+  amplitude_samples: &'a [f64],
+}
+
+pub struct FrqIter<'a> {
   samples: Iter<'a, f64>,
   amplitude_samples: Iter<'a, f64>,
 }
@@ -80,9 +85,16 @@ impl Frq {
     }
   }
 
+  pub fn as_part(&self) -> FrqPart<'_> {
+    FrqPart {
+      header: &self.header,
+      samples: &self.samples,
+      amplitude_samples: &self.amplitude_samples
+    }
+  }
+
   pub fn iter(&self) -> FrqIter<'_> {
     FrqIter {
-      header: &self.header,
       samples: self.samples.iter(),
       amplitude_samples: self.amplitude_samples.iter(),
     }
@@ -101,13 +113,20 @@ impl FrqHeader {
   }
 }
 
-impl FrqIter<'_> {
+impl FrqPart<'_> {
   pub fn samples(&self) -> &[f64] {
-    self.samples.as_slice()
+    self.samples
   }
 
   pub fn amplitude_samples(&self) -> &[f64] {
-    self.amplitude_samples.as_slice()
+    self.amplitude_samples
+  }
+
+  pub fn iter(&self) -> FrqIter<'_> {
+    FrqIter {
+      samples: self.samples.iter(),
+      amplitude_samples: self.samples.iter(),
+    }
   }
 }
 
@@ -135,10 +154,18 @@ impl Deref for Frq {
   }
 }
 
+impl Deref for FrqPart<'_> {
+  type Target = [f64];
+
+  fn deref(&self) -> &Self::Target {
+    self.samples
+  }
+}
+
 impl Deref for FrqIter<'_> {
   type Target = [f64];
 
   fn deref(&self) -> &Self::Target {
-    self.samples()
+    self.samples.as_slice()
   }
 }

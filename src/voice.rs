@@ -1,10 +1,12 @@
 use crate::{
   wav::{
     Wav,
+    WavPart,
     WavIter,
   },
   frq::{
     Frq,
+    FrqPart,
     FrqIter,
   },
 };
@@ -12,6 +14,11 @@ use crate::{
 pub struct Voice {
   wav: Wav,
   frq: Frq,
+}
+
+pub struct VoicePart<'a> {
+  wav: WavPart<'a>,
+  frq: FrqPart<'a>,
 }
 
 pub struct VoiceIter<'a> {
@@ -26,6 +33,13 @@ pub trait VoiceRef {
 }
 
 impl Voice {
+  pub fn as_part(&self) -> VoicePart<'_> {
+    VoicePart {
+      wav: self.wav.as_part(),
+      frq: self.frq.as_part(),
+    }
+  }
+
   pub fn iter(&self) -> VoiceIter<'_> {
     VoiceIter {
       wav: self.wav.iter(),
@@ -44,7 +58,7 @@ impl VoiceRef for Voice {
   }
 }
 
-impl VoiceRef for VoiceIter<'_> {
+impl VoiceRef for VoicePart<'_> {
   fn wav(&self) -> &[i32] {
     self.wav.samples()
   }
