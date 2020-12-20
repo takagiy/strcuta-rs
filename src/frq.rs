@@ -1,15 +1,46 @@
+use crate::{
+  io::{
+    BinaryRead,
+    StringOrBytes,
+  },
+};
 use std::{
   slice::{
     Iter,
   },
   ops::{
     Deref,
-  }
+  },
+  fs::{
+    File,
+  },
+  path::{
+    Path,
+  },
+};
+use byteorder::{
+  LittleEndian as LE,
+};
+use getset::{
+  Getters,
 };
 
+#[derive(Getters)]
 pub struct Frq {
+  #[get = "pub"]
+  header: FrqHeader,
+  #[get = "pub"]
   samples: Vec<f64>,
+  #[get = "pub"]
   amplitude_samples: Vec<f64>,
+}
+
+pub struct FrqHeader {
+  pub chunk_id: StringOrBytes,
+  pub sampling_interval: i32,
+  pub key_frequency: f64,
+  pub comment: StringOrBytes,
+  pub len: i32,
 }
 
 pub struct FrqIter<'a> {
@@ -18,10 +49,35 @@ pub struct FrqIter<'a> {
 }
 
 impl Frq {
+  pub fn open(path: impl AsRef<Path>) -> Frq {
+    let mut frq_file = File::open(path).unwrap();
+    let header = FrqHeader::read(&mut frq_file);
+
+    let samples = Vec::new();
+    let amplitude_samples = Vec::new();
+    Frq {
+      header: header,
+      samples: samples,
+      amplitude_samples: amplitude_samples,
+    }
+  }
+
   pub fn iter(&self) -> FrqIter<'_> {
     FrqIter {
       samples: self.samples.iter(),
       amplitude_samples: self.amplitude_samples.iter(),
+    }
+  }
+}
+
+impl FrqHeader {
+  pub fn read(reader: &mut impl BinaryRead) -> FrqHeader {
+    FrqHeader {
+      chunk_id: reader.read_string_from_chunk(8),
+      sampling_interval: reader.read_i32::<LE>().unwrap(),
+      key_frequency: reader.read_f64::<LE>().unwrap(),
+      comment: reader.read_string_from_chunk(16),
+      len: reader.read_i32::<LE>().unwrap(),
     }
   }
 }
