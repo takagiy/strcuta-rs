@@ -46,7 +46,10 @@ pub struct FrqHeader {
   pub len: i32,
 }
 
+#[derive(Getters)]
 pub struct FrqIter<'a> {
+  #[get = "pub"]
+  header: &'a FrqHeader,
   samples: Iter<'a, f64>,
   amplitude_samples: Iter<'a, f64>,
 }
@@ -79,6 +82,7 @@ impl Frq {
 
   pub fn iter(&self) -> FrqIter<'_> {
     FrqIter {
+      header: &self.header,
       samples: self.samples.iter(),
       amplitude_samples: self.amplitude_samples.iter(),
     }

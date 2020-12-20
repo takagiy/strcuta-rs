@@ -27,8 +27,11 @@ pub struct Wav {
 
 pub type WavHeader = WavSpec;
 
+#[derive(Getters)]
 pub struct WavIter<'a> {
-  samples: Iter<'a, i32>
+  #[get = "pub"]
+  header: &'a WavHeader,
+  samples: Iter<'a, i32>,
 }
 
 impl Wav {
@@ -42,7 +45,8 @@ impl Wav {
 
   pub fn iter(&self) -> WavIter<'_> {
     WavIter {
-      samples: self.samples.iter()
+      header: &self.header,
+      samples: self.samples.iter(),
     }
   }
 }
