@@ -1,7 +1,10 @@
 use crate::{
   io::{
-    IO
-  }
+    IO,
+  },
+  iter::{
+    Splitted,
+  },
 };
 use std::{
     collections::{
@@ -21,7 +24,15 @@ use getset::{
 #[derive(Getters)]
 pub struct PrefixMap {
   #[get = "pub"]
-  entries: HashMap<String, String>
+  entries: HashMap<String, Fixes>
+}
+
+#[derive(Getters)]
+pub struct Fixes {
+  #[get = "pub"]
+  prefix: String,
+  #[get = "pub"]
+  suffix: String,
 }
 
 impl PrefixMap {
@@ -37,8 +48,14 @@ impl PrefixMap {
     let mut entries = HashMap::new();
     for line in map_reader.lines() {
       let line = line.unwrap();
-      let (key, raw_key) = line.split_once('\t').unwrap();
-      entries.insert(key.to_string(), raw_key.to_string());
+      let items = &mut line.split('\t');
+      entries.insert(
+          Splitted::next_str(items).to_string(),
+          Fixes {
+            prefix: Splitted::next_str(items).to_string(),
+            suffix: Splitted::next_str(items).to_string(),
+          }
+      );
     }
     PrefixMap {
       entries: entries

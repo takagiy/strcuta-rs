@@ -1,7 +1,10 @@
 use crate::{
   io::{
-    IO
-  }
+    IO,
+  },
+  iter::{
+    Splitted,
+  },
 };
 use std::{
     collections::{
@@ -102,23 +105,15 @@ impl OtoEntry {
     
     OtoEntry {
        source_wav: PathBuf::from(source_wav),
-       mora: Self::next_str(params).to_string(),
-       offset: Self::next_f64(params),
-       consonent: Self::next_f64(params),
+       mora: Splitted::next_str(params).to_string(),
+       offset: Splitted::next_f64(params),
+       consonent: Splitted::next_f64(params),
        duration: {
-         let d = Self::next_f64(params);
+         let d = Splitted::next_f64(params);
          if d > 0. { LastSilence(d) } else { Sound(d) }
        },
-       preutterance: Self::next_f64(params),
-       overlap: Self::next_f64(params),
+       preutterance: Splitted::next_f64(params),
+       overlap: Splitted::next_f64(params),
     }
-  }
-
-  fn next_str<'a>(iterator: &mut impl Iterator<Item=&'a str>) -> &'a str {
-    iterator.next().unwrap().trim()
-  }
-
-  fn next_f64<'a>(iterator: &mut impl Iterator<Item=&'a str>) -> f64 {
-    Self::next_str(iterator).parse().unwrap()
   }
 }
