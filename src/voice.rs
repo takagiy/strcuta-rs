@@ -11,16 +11,19 @@ use crate::{
   },
 };
 
+#[derive(Debug)]
 pub struct Voice {
   wav: Wav,
   frq: Frq,
 }
 
+#[derive(Debug)]
 pub struct VoicePart<'a> {
   wav: WavPart<'a>,
   frq: FrqPart<'a>,
 }
 
+#[derive(Debug)]
 pub struct VoiceIter<'a> {
   wav: WavIter<'a>,
   frq: FrqIter<'a>,

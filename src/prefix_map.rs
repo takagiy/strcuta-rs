@@ -21,13 +21,13 @@ use getset::{
   Getters
 };
 
-#[derive(Getters)]
+#[derive(Getters, Debug)]
 pub struct PrefixMap {
   #[get = "pub"]
   entries: HashMap<String, Fixes>
 }
 
-#[derive(Getters)]
+#[derive(Getters, Debug)]
 pub struct Fixes {
   #[get = "pub"]
   prefix: String,

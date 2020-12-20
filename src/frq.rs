@@ -28,7 +28,7 @@ use getset::{
   Getters,
 };
 
-#[derive(Getters)]
+#[derive(Getters, Debug)]
 pub struct Frq {
   #[get = "pub"]
   header: FrqHeader,
@@ -38,6 +38,7 @@ pub struct Frq {
   amplitude_samples: Vec<f64>,
 }
 
+#[derive(Debug)]
 pub struct FrqHeader {
   pub chunk_id: StringOrBytes,
   pub sampling_interval: i32,
@@ -46,7 +47,7 @@ pub struct FrqHeader {
   pub len: i32,
 }
 
-#[derive(Getters)]
+#[derive(Getters, Debug)]
 pub struct FrqPart<'a> {
   #[get = "pub"]
   header: &'a FrqHeader,
@@ -54,6 +55,7 @@ pub struct FrqPart<'a> {
   amplitude_samples: &'a [f64],
 }
 
+#[derive(Debug)]
 pub struct FrqIter<'a> {
   samples: Iter<'a, f64>,
   amplitude_samples: Iter<'a, f64>,

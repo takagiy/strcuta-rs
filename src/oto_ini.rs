@@ -26,14 +26,14 @@ use getset::{
   Getters,
 };
 
-#[derive(Getters)]
+#[derive(Getters, Debug)]
 pub struct OtoIni {
   // Map from moras to OTOs
   #[get = "pub"]
   entries: HashMap<String, OtoEntry>,
 }
 
-#[derive(Getters)]
+#[derive(Getters, Debug)]
 pub struct OtoEntry {
   #[get = "pub"]
   source_wav : PathBuf,
@@ -53,6 +53,7 @@ pub struct OtoEntry {
 
 pub use OtoDuration::*;
 
+#[derive(Debug)]
 pub enum OtoDuration {
   LastSilence(f64),
   Sound(f64),
