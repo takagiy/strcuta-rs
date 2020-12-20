@@ -12,8 +12,13 @@ use std::{
 use hound::{
   WavReader,
 };
+use getset::{
+  Getters,
+};
 
+#[derive(Getters)]
 pub struct Wav {
+  #[get = "pub"]
   samples: Vec<i32>
 }
 
