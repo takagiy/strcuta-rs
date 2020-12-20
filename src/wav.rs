@@ -11,6 +11,7 @@ use std::{
 };
 use hound::{
   WavReader,
+  WavSpec,
 };
 use getset::{
   Getters,
@@ -19,8 +20,12 @@ use getset::{
 #[derive(Getters)]
 pub struct Wav {
   #[get = "pub"]
-  samples: Vec<i32>
+  header: WavHeader,
+  #[get = "pub"]
+  samples: Vec<i32>,
 }
+
+pub type WavHeader = WavSpec;
 
 pub struct WavIter<'a> {
   samples: Iter<'a, i32>
@@ -30,7 +35,8 @@ impl Wav {
   pub fn open(path: impl AsRef<Path>) -> Wav {
     let reader = WavReader::open(path).unwrap();
     Wav {
-      samples: reader.into_samples::<i32>().map(|smp| smp.unwrap()).collect()
+      header: reader.spec(),
+      samples: reader.into_samples::<i32>().map(|smp| smp.unwrap()).collect(),
     }
   }
 
