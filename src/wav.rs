@@ -11,6 +11,7 @@ use std::{
 };
 use hound::{
   WavReader,
+  WavWriter,
   WavSpec,
 };
 use getset::{
@@ -54,6 +55,14 @@ impl Wav {
 impl WavIter<'_> {
   pub fn samples(&self) -> &[i32] {
     self.samples.as_slice()
+  }
+
+  pub fn save(&self, path: impl AsRef<Path>) {
+    let mut writer = WavWriter::create(path, self.header.clone()).unwrap();
+    for &smp in self.samples.as_slice() {
+      writer.write_sample(smp).unwrap();
+    }
+    writer.finalize().unwrap();
   }
 }
 

@@ -3,6 +3,9 @@ fn main() {
     for amp in wav.iter() {
       print!("{};", amp);
     }
+    let wav = wav.iter();
+    wav.save("resources/test.wav");
+    wav.save("resources/test2.wav");
     println!();
     let frq = strcuta::Frq::open("resources/波音リツ連続音Ver1.5.1/通常/_ああいあうえあ_wav.frq");
     for (frq, amp) in frq.iter() {
