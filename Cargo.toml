@@ -2,6 +2,7 @@
 name = "strcuta"
 version = "0.1.0"
 authors = ["takagiy <takagiy.4dev@gmail.com>"]
+license = "BSL-1.0"
 edition = "2018"
 
 [dependencies]
