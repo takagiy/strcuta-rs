@@ -117,6 +117,12 @@ impl<'a> Iterator for FrqIter<'a> {
   }
 }
 
+impl ExactSizeIterator for FrqIter<'_> {
+  fn len(&self) -> usize {
+    self.samples.len()
+  }
+}
+
 impl Deref for Frq {
   type Target = [f64];
 

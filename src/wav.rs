@@ -55,6 +55,12 @@ impl<'a> Iterator for WavIter<'a> {
   }
 }
 
+impl ExactSizeIterator for WavIter<'_> {
+  fn len(&self) -> usize {
+    self.samples.len()
+  }
+}
+
 impl Deref for Wav {
   type Target = [i32];
 
