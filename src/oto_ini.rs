@@ -111,7 +111,7 @@ impl OtoEntry {
        consonent: Splitted::next_f64(params),
        duration: {
          let d = Splitted::next_f64(params);
-         if d > 0. { LastSilence(d) } else { Sound(d) }
+         if d > 0. { LastSilence(d) } else { Sound(-d) }
        },
        preutterance: Splitted::next_f64(params),
        overlap: Splitted::next_f64(params),
