@@ -57,7 +57,7 @@ impl Frq {
     let header = FrqHeader::read(&mut frq_file);
 
     // Prepare a buffered reader with capacity for header.len pairs of f64
-    let mut reader = BufReader::with_capacity((2 * 16 * header.len) as usize, frq_file);
+    let mut reader = BufReader::with_capacity((2 * 8 * header.len) as usize, frq_file);
     Self::read_with_header(header, &mut reader)
   }
 
