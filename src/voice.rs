@@ -46,11 +46,11 @@ impl VoiceRef for Voice {
 
 impl VoiceRef for VoiceIter<'_> {
   fn wav(&self) -> &[i32] {
-    self.wav.as_slice()
+    self.wav.samples()
   }
 
   fn frq(&self) -> &[f64] {
-    self.frq.as_slice()
+    self.frq.samples()
   }
 }
 

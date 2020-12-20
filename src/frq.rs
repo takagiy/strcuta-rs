@@ -98,11 +98,11 @@ impl FrqHeader {
 }
 
 impl FrqIter<'_> {
-  pub fn as_slice(&self) -> &[f64] {
+  pub fn samples(&self) -> &[f64] {
     self.samples.as_slice()
   }
 
-  pub fn as_amplitude_slice(&self) -> &[f64] {
+  pub fn amplitude_samples(&self) -> &[f64] {
     self.amplitude_samples.as_slice()
   }
 }
@@ -135,6 +135,6 @@ impl Deref for FrqIter<'_> {
   type Target = [f64];
 
   fn deref(&self) -> &Self::Target {
-    self.as_slice()
+    self.samples()
   }
 }

@@ -42,7 +42,7 @@ impl Wav {
 }
 
 impl WavIter<'_> {
-  pub fn as_slice(&self) -> &[i32] {
+  pub fn samples(&self) -> &[i32] {
     self.samples.as_slice()
   }
 }
@@ -73,6 +73,6 @@ impl Deref for WavIter<'_> {
   type Target = [i32];
 
   fn deref(&self) -> &Self::Target {
-    self.as_slice()
+    self.samples()
   }
 }
