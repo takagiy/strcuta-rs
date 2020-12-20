@@ -11,6 +11,9 @@ use std::{
   ops::{
     Deref,
   },
+  io::{
+    BufReader
+  },
   fs::{
     File,
   },
@@ -53,8 +56,20 @@ impl Frq {
     let mut frq_file = File::open(path).unwrap();
     let header = FrqHeader::read(&mut frq_file);
 
-    let samples = Vec::new();
-    let amplitude_samples = Vec::new();
+    // Prepare a buffered reader with capacity for header.len pairs of f64
+    let mut reader = BufReader::with_capacity((2 * 16 * header.len) as usize, frq_file);
+    Self::read_with_header(header, &mut reader)
+  }
+
+  fn read_with_header(header: FrqHeader, reader: &mut impl BinaryRead) -> Frq {
+    let mut samples = Vec::new();
+    let mut amplitude_samples = Vec::new();
+
+    for _ in 0..header.len {
+      samples.push(reader.read_f64::<LE>().unwrap());
+      amplitude_samples.push(reader.read_f64::<LE>().unwrap());
+    }
+
     Frq {
       header: header,
       samples: samples,

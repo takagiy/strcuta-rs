@@ -5,6 +5,9 @@ fn main() {
     }
     println!();
     let frq = strcuta::Frq::open("resources/波音リツ連続音Ver1.5.1/通常/_ああいあうえあ_wav.frq");
+    for (frq, amp) in frq.iter() {
+      print!("({},{})", frq, amp);
+    }
     println!("frq chunk id {}", frq.header().chunk_id.as_ref().unwrap());
     println!("frq sampling interval {}", frq.header().sampling_interval);
     println!("frq key frequency {}", frq.header().key_frequency);

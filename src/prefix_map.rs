@@ -14,8 +14,13 @@ use std::{
       Path,
     },
 };
+use getset::{
+  Getters
+};
 
+#[derive(Getters)]
 pub struct PrefixMap {
+  #[get = "pub"]
   entries: HashMap<String, String>
 }
 

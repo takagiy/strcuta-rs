@@ -19,19 +19,32 @@ use walkdir::{
   WalkDir,
   DirEntry,
 };
+use getset::{
+  Getters,
+};
 
+#[derive(Getters)]
 pub struct OtoIni {
   // Map from moras to OTOs
+  #[get = "pub"]
   entries: HashMap<String, OtoEntry>,
 }
 
+#[derive(Getters)]
 pub struct OtoEntry {
+  #[get = "pub"]
   source_wav : PathBuf,
+  #[get = "pub"]
   mora : String,
+  #[get = "pub"]
   offset : f64,
+  #[get = "pub"]
   consonent : f64,
+  #[get = "pub"]
   duration: OtoDuration,
+  #[get = "pub"]
   preutterance : f64,
+  #[get = "pub"]
   overlap : f64,
 }
 
