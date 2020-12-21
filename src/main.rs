@@ -10,6 +10,7 @@ fn main() {
     let oto_ini = strcuta::OtoIni::explore("resources");
     println!("oto ini {:?}", oto_ini);
     let frq = strcuta::Frq::open("resources/波音リツ連続音Ver1.5.1/通常/_ああいあうえあ_wav.frq");
+    println!("{:?}", wav.header());
     for (frq, amp) in frq.iter() {
       print!("({:?},{:?})", frq, amp);
     }
