@@ -17,6 +17,9 @@ use std::{
       Path,
       PathBuf,
     },
+    ops::{
+      Range,
+    },
 };
 use walkdir::{
   WalkDir,
@@ -116,5 +119,44 @@ impl OtoEntry {
        preutterance: Splitted::next_f64(params),
        overlap: Splitted::next_f64(params),
     }
+  }
+
+  pub fn start(&self) -> f64 {
+    self.offset
+  }
+
+  pub fn ovl_end(&self) -> f64 {
+    self.offset + self.overlap
+  }
+
+  pub fn pre_end(&self) -> f64 {
+    self.offset + self.preutterance
+  }
+
+  pub fn con_end(&self) -> f64 {
+    self.offset + self.consonent
+  }
+
+  pub fn end(&self) -> Result<f64, f64> {
+    match self.duration {
+      Sound(duration) => Ok(self.offset + duration),
+      LastSilence(negative_offset) => Err(negative_offset),
+    }
+  }
+
+  pub fn ovl(&self) -> Range<f64> {
+    self.start()..self.ovl_end()
+  }
+
+  pub fn pre(&self) -> Range<f64> {
+    self.start()..self.pre_end()
+  }
+
+  pub fn con(&self) -> Range<f64> {
+    self.start()..self.con_end()
+  }
+
+  pub fn voice(&self) -> Result<Range<f64>, f64> {
+    self.end().map(|end| self.start()..end)
   }
 }
