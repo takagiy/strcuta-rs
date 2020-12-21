@@ -5,9 +5,6 @@ use crate::{
   iter::{
     Splitted,
   },
-  wav::{
-    WavHeader,
-  },
 };
 use std::{
     collections::{
@@ -147,11 +144,11 @@ impl OtoEntry {
     }
   }
 
-  pub fn definite_end(&self, wav_header: &WavHeader, wav_len: usize) -> f64 {
+  pub fn definite_end(&self, sample_rate: u32, wav_len: usize) -> f64 {
     match self.end() {
       Ok(end) => end,
       Err(negative_offset) => {
-        let wav_duration = wav_len as f64 / wav_header.sample_rate as f64;
+        let wav_duration = wav_len as f64 / sample_rate as f64;
         wav_duration - negative_offset
       },
     }
@@ -173,15 +170,15 @@ impl OtoEntry {
     self.end().map(|end| self.con_end()..end)
   }
 
-  pub fn definite_vow(&self, wav_header: &WavHeader, wav_len: usize) -> Range<f64> {
-    self.con_end()..self.definite_end(wav_header, wav_len)
+  pub fn definite_vow(&self, sample_rate: u32, wav_len: usize) -> Range<f64> {
+    self.con_end()..self.definite_end(sample_rate, wav_len)
   }
 
   pub fn voice(&self) -> Result<Range<f64>, f64> {
     self.end().map(|end| self.start()..end)
   }
 
-  pub fn definite_voice(&self, wav_header: &WavHeader, wav_len: usize) -> Range<f64> {
-    self.start()..self.definite_end(wav_header, wav_len)
+  pub fn definite_voice(&self, sample_rate: u32, wav_len: usize) -> Range<f64> {
+    self.start()..self.definite_end(sample_rate, wav_len)
   }
 }
