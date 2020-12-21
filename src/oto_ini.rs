@@ -39,7 +39,7 @@ pub struct OtoIni {
   entries: HashMap<String, OtoEntry>,
 }
 
-#[derive(Getters, Debug)]
+#[derive(Getters, Clone, Debug)]
 pub struct OtoEntry {
   #[get = "pub"]
   source_wav : PathBuf,
@@ -59,7 +59,7 @@ pub struct OtoEntry {
 
 pub use OtoDuration::*;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum OtoDuration {
   LastSilence(f64),
   Sound(f64),
@@ -167,6 +167,14 @@ impl OtoEntry {
 
   pub fn con(&self) -> Range<f64> {
     self.start()..self.con_end()
+  }
+
+  pub fn vow(&self) -> Result<Range<f64>, f64> {
+    self.end().map(|end| self.con_end()..end)
+  }
+
+  pub fn definite_vow(&self, wav_header: &WavHeader, wav_len: usize) -> Range<f64> {
+    self.con_end()..self.definite_end(wav_header, wav_len)
   }
 
   pub fn voice(&self) -> Result<Range<f64>, f64> {
