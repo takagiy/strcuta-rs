@@ -3,10 +3,14 @@ use crate::{
     BinaryRead,
     StringOrBytes,
   },
+  cut::{
+    Cut,
+  }
 };
 use std::{
   slice::{
     Iter,
+    SliceIndex,
   },
   ops::{
     Deref,
@@ -169,5 +173,15 @@ impl Deref for FrqIter<'_> {
 
   fn deref(&self) -> &Self::Target {
     self.samples.as_slice()
+  }
+}
+
+impl<I: Clone + SliceIndex<[f64], Output = [f64]>> Cut<I> for FrqPart<'_> {
+  fn cut(&self, index: I) -> Self {
+    FrqPart {
+      header: &self.header,
+      samples: &self.samples[index.clone()],
+      amplitude_samples: &self.amplitude_samples[index],
+    }
   }
 }

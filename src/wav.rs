@@ -1,13 +1,19 @@
+use crate::{
+  cut::{
+    Cut,
+  },
+};
 use std::{
   slice::{
     Iter,
+    SliceIndex,
   },
   path::{
     Path,
   },
   ops::{
     Deref,
-  }
+  },
 };
 use hound::{
   WavReader,
@@ -118,5 +124,14 @@ impl Deref for WavIter<'_> {
 
   fn deref(&self) -> &Self::Target {
     self.samples.as_slice()
+  }
+}
+
+impl<I: SliceIndex<[i32], Output = [i32]>> Cut<I> for WavPart<'_> {
+  fn cut(&self, index: I) -> Self {
+    WavPart {
+      header: &self.header,
+      samples: &self.samples[index],
+    }
   }
 }

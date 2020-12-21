@@ -9,6 +9,14 @@ use crate::{
     FrqPart,
     FrqIter,
   },
+  cut::{
+    Cut,
+  },
+};
+use std::{
+  slice::{
+    SliceIndex,
+  },
 };
 
 #[derive(Debug)]
@@ -78,5 +86,18 @@ impl<'a> Iterator for VoiceIter<'a> {
     self.wav.next().and_then(|wav| {
       self.frq.next().map(|frq| (wav, frq.0))
     })
+  }
+}
+
+impl<
+  I: Clone +
+     SliceIndex<[i32], Output = [i32]> +
+     SliceIndex<[f64], Output = [f64]>
+> Cut<I> for VoicePart<'_> {
+  fn cut(&self, index: I) -> Self {
+    VoicePart {
+      wav: self.wav.cut(index.clone()),
+      frq: self.frq.cut(index),
+    }
   }
 }

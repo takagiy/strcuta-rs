@@ -1,3 +1,5 @@
+use strcuta::Cut;
+
 fn main() {
     let wav = strcuta::Wav::open("resources/波音リツ連続音Ver1.5.1/通常/_ああいあうえあ.wav");
     println!("wav len {:?}", wav.len());
@@ -8,6 +10,7 @@ fn main() {
     let wav = wav.as_part();
     wav.save("resources/test.wav");
     wav.save("resources/test2.wav");
+    wav.cut(0..100000).save("resources/test3.wav");
     println!("wav part len {:?}", wav.len());
     let oto_ini = strcuta::OtoIni::explore("resources");
     println!("oto ini {:?}", oto_ini);
