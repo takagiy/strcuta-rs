@@ -84,7 +84,7 @@ impl OtoIni {
 
   pub fn explore(path: impl AsRef<Path>) -> OtoIni {
     let mut oto_ini = Self::new();
-    for dir_entry in WalkDir::new(path).max_depth(3) {
+    for dir_entry in WalkDir::new(path).max_depth(2) {
       let dir_entry = dir_entry.unwrap();
       if Self::is_oto_ini(&dir_entry) {
         oto_ini.extend(Self::open(dir_entry.path()));
