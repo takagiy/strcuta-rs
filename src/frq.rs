@@ -72,8 +72,8 @@ impl Frq {
   }
 
   fn read_with_header(header: FrqHeader, reader: &mut impl BinaryRead) -> Frq {
-    let mut samples = Vec::new();
-    let mut amplitude_samples = Vec::new();
+    let mut samples = Vec::with_capacity(header.len as usize);
+    let mut amplitude_samples = Vec::with_capacity(header.len as usize);
 
     for _ in 0..header.len {
       samples.push(reader.read_f64::<LE>().unwrap());
