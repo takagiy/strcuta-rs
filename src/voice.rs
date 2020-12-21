@@ -87,6 +87,13 @@ impl Voice {
   pub fn con(&self) -> VoicePart<'_> {
     self.as_part().cut(self.oto.con().to_usize_range(self.wav.header().sample_rate))
   }
+
+  pub fn vow(&self) -> VoicePart<'_> {
+    let duration =
+        self.oto.definite_vow(self.wav.header().sample_rate, self.wav.len())
+            .to_usize_range(self.wav.header().sample_rate);
+    self.as_part().cut(duration)
+  }
 }
 
 impl VoicePart<'_> {
