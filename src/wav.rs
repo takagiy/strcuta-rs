@@ -80,6 +80,13 @@ impl WavPart<'_> {
     }
   }
 
+  pub fn cut(&self, index: impl SliceIndex<[i32], Output = [i32]>) -> Self {
+    WavPart {
+      header: &self.header,
+      samples: &self.samples[index],
+    }
+  }
+
   pub fn save(&self, path: impl AsRef<Path>) {
     let mut writer = WavWriter::create(path, self.header.clone()).unwrap();
     for &smp in self.samples {
@@ -129,9 +136,6 @@ impl Deref for WavIter<'_> {
 
 impl<I: SliceIndex<[i32], Output = [i32]>> Cut<I> for WavPart<'_> {
   fn cut(&self, index: I) -> Self {
-    WavPart {
-      header: &self.header,
-      samples: &self.samples[index],
-    }
+    self.cut(index)
   }
 }

@@ -134,6 +134,14 @@ impl FrqPart<'_> {
       amplitude_samples: self.samples.iter(),
     }
   }
+
+  fn cut(&self, index: impl Clone + SliceIndex<[f64], Output = [f64]>) -> Self {
+    FrqPart {
+      header: &self.header,
+      samples: &self.samples[index.clone()],
+      amplitude_samples: &self.amplitude_samples[index],
+    }
+  }
 }
 
 impl<'a> Iterator for FrqIter<'a> {
@@ -178,10 +186,6 @@ impl Deref for FrqIter<'_> {
 
 impl<I: Clone + SliceIndex<[f64], Output = [f64]>> Cut<I> for FrqPart<'_> {
   fn cut(&self, index: I) -> Self {
-    FrqPart {
-      header: &self.header,
-      samples: &self.samples[index.clone()],
-      amplitude_samples: &self.amplitude_samples[index],
-    }
+    self.cut(index)
   }
 }
