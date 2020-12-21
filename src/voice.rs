@@ -9,6 +9,9 @@ use crate::{
     FrqPart,
     FrqIter,
   },
+  oto_ini::{
+    OtoEntry
+  },
   cut::{
     Cut,
   },
@@ -17,16 +20,26 @@ use std::{
   slice::{
     SliceIndex,
   },
+  ops::{
+    Range,
+  },
+};
+use getset::{
+  Getters,
 };
 
-#[derive(Debug)]
+#[derive(Getters, Debug)]
 pub struct Voice {
+  #[get = "pub"]
+  oto: OtoEntry,
   wav: Wav,
   frq: Frq,
 }
 
-#[derive(Debug)]
+#[derive(Getters, Debug)]
 pub struct VoicePart<'a> {
+  #[get = "pub"]
+  oto: &'a OtoEntry,
   wav: WavPart<'a>,
   frq: FrqPart<'a>,
 }
@@ -43,9 +56,14 @@ pub trait VoiceRef {
   fn frq(&self) -> &[f64];
 }
 
+pub trait SampleRange {
+  fn to_usize_range(&self, sample_rate: u32) -> Range<usize>;
+}
+
 impl Voice {
   pub fn as_part(&self) -> VoicePart<'_> {
     VoicePart {
+      oto: &self.oto,
       wav: self.wav.as_part(),
       frq: self.frq.as_part(),
     }
@@ -57,6 +75,18 @@ impl Voice {
       frq: self.frq.iter(),
     }
   }
+
+  pub fn ovl(&self) -> VoicePart<'_> {
+    self.as_part().cut(self.oto.ovl().to_usize_range(self.wav.header().sample_rate))
+  }
+
+  pub fn pre(&self) -> VoicePart<'_> {
+    self.as_part().cut(self.oto.ovl().to_usize_range(self.wav.header().sample_rate))
+  }
+
+  pub fn con(&self) -> VoicePart<'_> {
+    self.as_part().cut(self.oto.con().to_usize_range(self.wav.header().sample_rate))
+  }
 }
 
 impl VoicePart<'_> {
@@ -67,6 +97,7 @@ impl VoicePart<'_> {
              SliceIndex<[f64], Output = [f64]>
   ) -> Self {
     VoicePart {
+      oto: &self.oto,
       wav: self.wav.cut(index.clone()),
       frq: self.frq.cut(index),
     }
@@ -110,5 +141,15 @@ impl<
 > Cut<I> for VoicePart<'_> {
   fn cut(&self, index: I) -> Self {
     self.cut(index)
+  }
+}
+
+impl SampleRange for Range<f64> {
+  fn to_usize_range(&self, sample_rate: u32) -> Range<usize> {
+    let Range { start, end } = self;
+    Range {
+      start: (start * sample_rate as f64) as usize,
+      end: (end * sample_rate as f64) as usize,
+    }
   }
 }
