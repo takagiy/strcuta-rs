@@ -149,7 +149,7 @@ impl FrqPart<'_> {
     }
   }
 
-  fn cut(&self, index: impl Clone + SliceIndex<[f64], Output = [f64]>) -> Self {
+  pub fn cut(&self, index: impl Clone + SliceIndex<[f64], Output = [f64]>) -> Self {
     FrqPart {
       header: &self.header,
       samples: &self.samples[index.clone()],

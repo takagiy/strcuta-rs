@@ -10,7 +10,7 @@ fn main() {
     wav.save("resources/test2.wav");
     wav.cut(0..100000).save("resources/test3.wav");
     println!("wav part len {:?}", wav.len());
-    let oto_ini = strcuta::OtoIni::explore("resources");
+    let oto_ini = strcuta::OtoIni::explore("resources/波音リツ連続音Ver1.5.1");
     println!("oto ini {:?}", oto_ini);
     let frq = strcuta::Frq::open("resources/波音リツ連続音Ver1.5.1/通常/_ああいあうえあ_wav.frq");
     println!("frq len {:?}", frq.len());

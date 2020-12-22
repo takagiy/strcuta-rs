@@ -48,6 +48,7 @@ pub struct WavIter<'a> {
 
 impl Wav {
   pub fn open(path: impl AsRef<Path>) -> Wav {
+    println!("{:?}", path.as_ref());
     let reader = WavReader::open(path).unwrap();
     Wav {
       header: reader.spec(),

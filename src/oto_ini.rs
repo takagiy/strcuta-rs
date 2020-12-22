@@ -65,20 +65,21 @@ pub enum OtoDuration {
 impl OtoIni {
   pub fn new() -> OtoIni {
     OtoIni {
-      entries: HashMap::new()
+      entries: HashMap::new(),
     }
   }
 
   pub fn open(path: impl AsRef<Path>) -> OtoIni {
+    let source_dir = path.as_ref().parent().unwrap().canonicalize().unwrap();
     let ini_reader = IO::shift_jis_reader(path);
 
     let mut entries = HashMap::new();
     for line in ini_reader.lines() {
-       let entry = OtoEntry::from_line(&line.unwrap());
+       let entry = OtoEntry::from_line(&source_dir, &line.unwrap());
        entries.insert(entry.mora.clone(), entry);
     }
     OtoIni {
-      entries: entries
+      entries: entries,
     }
   }
 
@@ -103,12 +104,12 @@ impl OtoIni {
 }
 
 impl OtoEntry {
-  fn from_line(line: &str) -> OtoEntry {
+  fn from_line(source_dir: impl AsRef<Path>, line: &str) -> OtoEntry {
     let (source_wav, params) = line.split_once('=').unwrap();
     let params = &mut params.split(',');
     
     OtoEntry {
-       source_wav: PathBuf::from(source_wav),
+       source_wav: source_dir.as_ref().join(source_wav),
        mora: Splitted::next_str(params).to_string(),
        offset: Splitted::next_f64(params),
        consonent: Splitted::next_f64(params),

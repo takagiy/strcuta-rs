@@ -121,7 +121,7 @@ impl VoicePart<'_> {
     self.frq.clone()
   }
 
-  fn cut(
+  pub fn cut(
       &self,
       index: impl Clone +
              SliceIndex<[i32], Output = [i32]> +
