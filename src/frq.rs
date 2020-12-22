@@ -51,7 +51,7 @@ pub struct FrqHeader {
   pub len: i32,
 }
 
-#[derive(Getters, Debug)]
+#[derive(Getters, Clone, Debug)]
 pub struct FrqPart<'a> {
   #[get = "pub"]
   header: &'a FrqHeader,

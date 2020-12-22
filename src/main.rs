@@ -1,5 +1,3 @@
-use strcuta::VoiceRef;
-
 fn main() {
     let wav = strcuta::Wav::open("resources/波音リツ連続音Ver1.5.1/通常/_ああいあうえあ.wav");
     println!("wav len {:?}", wav.len());

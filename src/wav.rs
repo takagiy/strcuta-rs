@@ -34,7 +34,7 @@ pub struct Wav {
 
 pub type WavHeader = WavSpec;
 
-#[derive(Getters, Debug)]
+#[derive(Getters, Clone, Debug)]
 pub struct WavPart<'a> {
   #[get = "pub"]
   header: &'a WavHeader,

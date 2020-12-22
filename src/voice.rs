@@ -51,9 +51,9 @@ pub struct VoiceIter<'a> {
 }
 
 pub trait VoiceRef {
-  fn wav(&self) -> &[i32];
+  fn wav(&self) -> WavPart<'_>;
 
-  fn frq(&self) -> &[f64];
+  fn frq(&self) -> FrqPart<'_>;
 }
 
 pub trait SampleRange {
@@ -67,6 +67,14 @@ impl Voice {
       wav: Wav::open(oto.source_wav()),
       frq: Frq::open_by_wav_path(oto.source_wav()),
     }
+  }
+
+  pub fn wav(&self) -> WavPart<'_> {
+    self.wav.as_part()
+  }
+
+  pub fn frq(&self) -> FrqPart<'_> {
+    self.frq.as_part()
   }
 
   pub fn as_part(&self) -> VoicePart<'_> {
@@ -105,6 +113,14 @@ impl Voice {
 }
 
 impl VoicePart<'_> {
+  pub fn wav(&self) -> WavPart<'_> {
+    self.wav.clone()
+  }
+
+  pub fn frq(&self) -> FrqPart<'_> {
+    self.frq.clone()
+  }
+
   fn cut(
       &self,
       index: impl Clone +
@@ -120,22 +136,22 @@ impl VoicePart<'_> {
 }
 
 impl VoiceRef for Voice {
-  fn wav(&self) -> &[i32] {
-    &self.wav
+  fn wav(&self) -> WavPart<'_> {
+    self.wav()
   }
 
-  fn frq(&self) -> &[f64] {
-    &self.frq
+  fn frq(&self) -> FrqPart<'_> {
+    self.frq()
   }
 }
 
 impl VoiceRef for VoicePart<'_> {
-  fn wav(&self) -> &[i32] {
-    self.wav.samples()
+  fn wav(&self) -> WavPart<'_> {
+    self.wav()
   }
 
-  fn frq(&self) -> &[f64] {
-    self.frq.samples()
+  fn frq(&self) -> FrqPart<'_> {
+    self.frq()
   }
 }
 
