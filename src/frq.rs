@@ -75,6 +75,20 @@ impl Frq {
     Self::read_with_header(header, &mut reader)
   }
 
+  pub fn open_by_wav_path(wav_path: impl AsRef<Path>) -> Frq {
+    let wav_file_stem = wav_path.as_ref().file_stem().unwrap();
+    let wav_extension = wav_path.as_ref().extension().unwrap();
+    let frq_file_name = {
+      let mut frq_file_name = wav_file_stem.to_os_string();
+      frq_file_name.push("_");
+      frq_file_name.push(wav_extension);
+      frq_file_name.push(".frq");
+      frq_file_name
+    };
+    let frq_path = wav_path.as_ref().with_file_name(frq_file_name);
+    Self::open(frq_path)
+  }
+
   fn read_with_header(header: FrqHeader, reader: &mut impl BinaryRead) -> Frq {
     let mut samples = Vec::with_capacity(header.len as usize);
     let mut amplitude_samples = Vec::with_capacity(header.len as usize);

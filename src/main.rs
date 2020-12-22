@@ -1,3 +1,5 @@
+use strcuta::VoiceRef;
+
 fn main() {
     let wav = strcuta::Wav::open("resources/波音リツ連続音Ver1.5.1/通常/_ああいあうえあ.wav");
     println!("wav len {:?}", wav.len());
@@ -28,5 +30,7 @@ fn main() {
     for (key, fixes)  in prefix_map.entries() {
       println!("prefix map {:?} -> {:?} {:?}", key, fixes.prefix(), fixes.suffix());
     }
+    let voice = strcuta::Voice::new(oto_ini.entries().values().next().unwrap());
+    println!("voice pre len {:?}", voice.pre().wav().len());
     println!("Hello, world!");
 }

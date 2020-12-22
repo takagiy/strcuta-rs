@@ -61,6 +61,14 @@ pub trait SampleRange {
 }
 
 impl Voice {
+  pub fn new(oto: &OtoEntry) -> Voice {
+    Voice {
+      oto: oto.clone(),
+      wav: Wav::open(oto.source_wav()),
+      frq: Frq::open_by_wav_path(oto.source_wav()),
+    }
+  }
+
   pub fn as_part(&self) -> VoicePart<'_> {
     VoicePart {
       oto: &self.oto,
