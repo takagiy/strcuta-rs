@@ -179,8 +179,8 @@ impl SampleRange for Range<f64> {
   fn to_usize_range(&self, sample_rate: u32) -> Range<usize> {
     let Range { start, end } = self;
     Range {
-      start: (start * sample_rate as f64) as usize,
-      end: (end * sample_rate as f64) as usize,
+      start: (start / 1000. * sample_rate as f64) as usize,
+      end: (end / 1000. * sample_rate as f64) as usize,
     }
   }
 }
