@@ -5,12 +5,12 @@ use crate::{
   },
   cut::{
     Cut,
+    SampleRange,
   }
 };
 use std::{
   slice::{
     Iter,
-    SliceIndex,
   },
   ops::{
     Deref,
@@ -49,6 +49,7 @@ pub struct FrqHeader {
   pub key_frequency: f64,
   pub comment: StringOrBytes,
   pub len: i32,
+  pub wav_sample_rate: u32,
 }
 
 #[derive(Getters, Clone, Debug)]
@@ -66,16 +67,16 @@ pub struct FrqIter<'a> {
 }
 
 impl Frq {
-  pub fn open(path: impl AsRef<Path>) -> Frq {
+  pub fn open(path: impl AsRef<Path>, wav_sample_rate: u32) -> Frq {
     let mut frq_file = File::open(path).unwrap();
-    let header = FrqHeader::read(&mut frq_file);
+    let header = FrqHeader::read(&mut frq_file, wav_sample_rate);
 
     // Prepare a buffered reader with capacity for header.len pairs of f64
     let mut reader = BufReader::with_capacity((2 * 8 * header.len) as usize, frq_file);
     Self::read_with_header(header, &mut reader)
   }
 
-  pub fn open_by_wav_path(wav_path: impl AsRef<Path>) -> Frq {
+  pub fn open_by_wav_path(wav_path: impl AsRef<Path>, wav_sample_rate: u32) -> Frq {
     let wav_file_stem = wav_path.as_ref().file_stem().unwrap();
     let wav_extension = wav_path.as_ref().extension().unwrap();
     let frq_file_name = {
@@ -86,7 +87,7 @@ impl Frq {
       frq_file_name
     };
     let frq_path = wav_path.as_ref().with_file_name(frq_file_name);
-    Self::open(frq_path)
+    Self::open(frq_path, wav_sample_rate)
   }
 
   fn read_with_header(header: FrqHeader, reader: &mut impl BinaryRead) -> Frq {
@@ -122,14 +123,19 @@ impl Frq {
 }
 
 impl FrqHeader {
-  pub fn read(reader: &mut impl BinaryRead) -> FrqHeader {
+  pub fn read(reader: &mut impl BinaryRead, wav_sample_rate: u32) -> FrqHeader {
     FrqHeader {
       chunk_id: reader.read_string_from_chunk(8),
       sampling_interval: reader.read_i32::<LE>().unwrap(),
       key_frequency: reader.read_f64::<LE>().unwrap(),
       comment: reader.read_string_from_chunk(16),
       len: reader.read_i32::<LE>().unwrap(),
+      wav_sample_rate: wav_sample_rate,
     }
+  }
+
+  pub fn sample_rate(&self) -> u32 {
+    self.wav_sample_rate / self.sampling_interval as u32
   }
 }
 
@@ -149,7 +155,8 @@ impl FrqPart<'_> {
     }
   }
 
-  pub fn cut(&self, index: impl Clone + SliceIndex<[f64], Output = [f64]>) -> Self {
+  pub fn cut(&self, index: impl SampleRange) -> Self {
+    let index = index.to_usize_range(self.header.sample_rate());
     FrqPart {
       header: &self.header,
       samples: &self.samples[index.clone()],
@@ -198,8 +205,8 @@ impl Deref for FrqIter<'_> {
   }
 }
 
-impl<I: Clone + SliceIndex<[f64], Output = [f64]>> Cut<I> for FrqPart<'_> {
-  fn cut(&self, index: I) -> Self {
+impl Cut for FrqPart<'_> {
+  fn cut(&self, index: impl SampleRange) -> Self {
     self.cut(index)
   }
 }

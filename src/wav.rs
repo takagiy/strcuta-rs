@@ -1,12 +1,12 @@
 use crate::{
   cut::{
     Cut,
+    SampleRange,
   },
 };
 use std::{
   slice::{
     Iter,
-    SliceIndex,
   },
   path::{
     Path,
@@ -81,10 +81,10 @@ impl WavPart<'_> {
     }
   }
 
-  pub fn cut(&self, index: impl SliceIndex<[i32], Output = [i32]>) -> Self {
+  pub fn cut(&self, index: impl SampleRange) -> Self {
     WavPart {
       header: &self.header,
-      samples: &self.samples[index],
+      samples: &self.samples[index.to_usize_range(self.header.sample_rate)],
     }
   }
 
@@ -135,8 +135,8 @@ impl Deref for WavIter<'_> {
   }
 }
 
-impl<I: SliceIndex<[i32], Output = [i32]>> Cut<I> for WavPart<'_> {
-  fn cut(&self, index: I) -> Self {
+impl Cut for WavPart<'_> {
+  fn cut(&self, index: impl SampleRange) -> Self {
     self.cut(index)
   }
 }

@@ -14,7 +14,7 @@ fn main() {
     println!("wav part len {:?}", wav.len());
     let oto_ini = strcuta::OtoIni::explore("resources/波音リツ連続音Ver1.5.1");
     println!("oto ini {:?}", oto_ini);
-    let frq = strcuta::Frq::open("resources/波音リツ連続音Ver1.5.1/通常/_ああいあうえあ_wav.frq");
+    let frq = strcuta::Frq::open("resources/波音リツ連続音Ver1.5.1/通常/_ああいあうえあ_wav.frq", 44100);
     println!("frq len {:?}", frq.len());
     println!("{:?}", wav.header());
     for (frq, amp) in frq.iter() {

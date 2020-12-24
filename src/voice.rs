@@ -14,14 +14,7 @@ use crate::{
   },
   cut::{
     Cut,
-  },
-};
-use std::{
-  slice::{
-    SliceIndex,
-  },
-  ops::{
-    Range,
+    SampleRange,
   },
 };
 use getset::{
@@ -56,16 +49,15 @@ pub trait VoiceRef {
   fn frq(&self) -> FrqPart<'_>;
 }
 
-pub trait SampleRange {
-  fn to_usize_range(&self, sample_rate: u32) -> Range<usize>;
-}
-
 impl Voice {
   pub fn new(oto: &OtoEntry) -> Voice {
+    let wav = Wav::open(oto.source_wav());
+    let wav_sample_rate = wav.header().sample_rate;
+
     Voice {
       oto: oto.clone(),
-      wav: Wav::open(oto.source_wav()),
-      frq: Frq::open_by_wav_path(oto.source_wav()),
+      wav: wav,
+      frq: Frq::open_by_wav_path(oto.source_wav(), wav_sample_rate),
     }
   }
 
@@ -93,21 +85,19 @@ impl Voice {
   }
 
   pub fn ovl(&self) -> VoicePart<'_> {
-    self.as_part().cut(self.oto.ovl().to_usize_range(self.wav.header().sample_rate))
+    self.as_part().cut(self.oto.ovl())
   }
 
   pub fn pre(&self) -> VoicePart<'_> {
-    self.as_part().cut(self.oto.ovl().to_usize_range(self.wav.header().sample_rate))
+    self.as_part().cut(self.oto.ovl())
   }
 
   pub fn con(&self) -> VoicePart<'_> {
-    self.as_part().cut(self.oto.con().to_usize_range(self.wav.header().sample_rate))
+    self.as_part().cut(self.oto.con())
   }
 
   pub fn vow(&self) -> VoicePart<'_> {
-    let duration =
-        self.oto.definite_vow(self.wav.header().sample_rate, self.wav.len())
-            .to_usize_range(self.wav.header().sample_rate);
+    let duration = self.oto.definite_vow(self.wav.header().sample_rate, self.wav.len());
     self.as_part().cut(duration)
   }
 }
@@ -121,12 +111,7 @@ impl VoicePart<'_> {
     self.frq.clone()
   }
 
-  pub fn cut(
-      &self,
-      index: impl Clone +
-             SliceIndex<[i32], Output = [i32]> +
-             SliceIndex<[f64], Output = [f64]>
-  ) -> Self {
+  pub fn cut(&self, index: impl SampleRange) -> Self {
     VoicePart {
       oto: &self.oto,
       wav: self.wav.cut(index.clone()),
@@ -165,22 +150,8 @@ impl<'a> Iterator for VoiceIter<'a> {
   }
 }
 
-impl<
-  I: Clone +
-     SliceIndex<[i32], Output = [i32]> +
-     SliceIndex<[f64], Output = [f64]>
-> Cut<I> for VoicePart<'_> {
-  fn cut(&self, index: I) -> Self {
+impl Cut for VoicePart<'_> {
+  fn cut(&self, index: impl SampleRange) -> Self {
     self.cut(index)
-  }
-}
-
-impl SampleRange for Range<f64> {
-  fn to_usize_range(&self, sample_rate: u32) -> Range<usize> {
-    let Range { start, end } = self;
-    Range {
-      start: (start / 1000. * sample_rate as f64) as usize,
-      end: (end / 1000. * sample_rate as f64) as usize,
-    }
   }
 }
