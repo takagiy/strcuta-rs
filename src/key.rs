@@ -35,7 +35,7 @@ impl Display for Key {
 
 impl From<&str> for Key {
   fn from(key_str: &str) -> Self {
-    let key_name_end = key_str.find(|c: char| !c.is_digit(10)).unwrap();
+    let key_name_end = key_str.find(|c: char| c.is_digit(10)).unwrap();
     let (key_name, octave) = key_str.split_at(key_name_end);
     Key(octave.parse().unwrap(), KeyName::from(key_name))
   }
