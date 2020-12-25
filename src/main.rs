@@ -27,7 +27,9 @@ fn main() {
     println!("frq comment {:?}", frq.header().comment.as_ref().unwrap());
     println!("frq len {:?}", frq.header().len);
     let prefix_map = strcuta::PrefixMap::open("resources/波音リツ連続音Ver1.5.1/prefix.map");
-    for (key, fixes)  in prefix_map.entries() {
+    let mut map_entries = prefix_map.entries().iter().collect::<Vec<_>>();
+    map_entries.sort_by(|l, r| l.0.cmp(&r.0));
+    for (key, fixes)  in map_entries {
       println!("prefix map {:?} -> {:?} {:?}", key, fixes.prefix(), fixes.suffix());
     }
     let oto = &oto_ini.entries()["u た↓"];
