@@ -30,11 +30,15 @@ fn main() {
     for (key, fixes)  in prefix_map.entries() {
       println!("prefix map {:?} -> {:?} {:?}", key, fixes.prefix(), fixes.suffix());
     }
-    let oto = oto_ini.entries().values().next().unwrap();
+    let oto = &oto_ini.entries()["u た↓"];
     println!("pre {:?}",oto.pre());
     println!("pre usize {:?}",oto.pre().to_usize_range(
             strcuta::Wav::open(oto.source_wav()).header().sample_rate));
     let voice = strcuta::Voice::new(oto);
     println!("voice pre len {:?}", voice.pre().wav().len());
+    let con = voice.con();
+    con.wav().save("resources/con.wav");
+    let vow = voice.vow();
+    vow.wav().save("resources/vow.wav");
     println!("Hello, world!");
 }
