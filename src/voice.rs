@@ -89,7 +89,7 @@ impl Voice {
   }
 
   pub fn pre(&self) -> VoicePart<'_> {
-    self.as_part().cut(self.oto.ovl())
+    self.as_part().cut(self.oto.pre())
   }
 
   pub fn con(&self) -> VoicePart<'_> {
