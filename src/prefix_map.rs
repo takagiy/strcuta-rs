@@ -5,6 +5,9 @@ use crate::{
   iter::{
     Splitted,
   },
+  key::{
+    Key,
+  },
 };
 use std::{
     collections::{
@@ -24,7 +27,7 @@ use getset::{
 #[derive(Getters, Debug)]
 pub struct PrefixMap {
   #[get = "pub"]
-  entries: HashMap<String, Fixes>
+  entries: HashMap<Key, Fixes>
 }
 
 #[derive(Getters, Debug)]
@@ -50,7 +53,7 @@ impl PrefixMap {
       let line = line.unwrap();
       let items = &mut line.split('\t');
       entries.insert(
-          Splitted::next_str(items).to_string(),
+          Key::from(Splitted::next_str(items)),
           Fixes {
             prefix: Splitted::next_str(items).to_string(),
             suffix: Splitted::next_str(items).to_string(),

@@ -6,12 +6,12 @@ use std::{
   },
 };
 
-#[derive(Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Key(u32, KeyName);
 
 pub use KeyName::*;
 
-#[derive(Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub enum KeyName {
   C,
   CSharp,
