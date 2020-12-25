@@ -1,9 +1,17 @@
-#[derive(Eq, PartialEq, Ord, PartialOrd)]
+use std::{
+  fmt::{
+    Display,
+    Formatter,
+    Error,
+  },
+};
+
+#[derive(Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Key(u32, KeyName);
 
 pub use KeyName::*;
 
-#[derive(Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub enum KeyName {
   C,
   CSharp,
@@ -17,6 +25,59 @@ pub enum KeyName {
   A,
   ASharp,
   B,
+}
+
+impl Display for Key {
+  fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+    write!(f, "{}{}", self.1, self.0)
+  }
+}
+
+impl From<&str> for Key {
+  fn from(key_str: &str) -> Self {
+    let key_name_end = key_str.find(|c: char| !c.is_digit(10)).unwrap();
+    let (key_name, octave) = key_str.split_at(key_name_end);
+    Key(octave.parse().unwrap(), KeyName::from(key_name))
+  }
+}
+
+impl Display for KeyName {
+  fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+    write!(f, "{}", match self {
+      C      => "C",
+      CSharp => "C#",
+      D      => "D",
+      DSharp => "D#",
+      E      => "E",
+      F      => "F",
+      FSharp => "F#",
+      G      => "G",
+      GSharp => "G#",
+      A      => "A",
+      ASharp => "A#",
+      B      => "B",
+    })
+  }
+}
+
+impl From<&str> for KeyName {
+  fn from(key_name_str: &str) -> Self {
+    match key_name_str {
+      "C"  => C,
+      "C#" => CSharp,
+      "D"  => D,
+      "D#" => DSharp,
+      "E"  => E,
+      "F"  => F,
+      "F#" => FSharp,
+      "G"  => G,
+      "G#" => GSharp,
+      "A"  => A,
+      "A#" => ASharp,
+      "B"  => B,
+      other => panic!("Unknown key name, {:?}", other)
+    }
+  }
 }
 
 pub const C1: Key = Key(1, C);
